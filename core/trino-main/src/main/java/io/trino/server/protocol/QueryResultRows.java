@@ -18,11 +18,13 @@ import com.google.common.collect.ImmutableList;
 import io.trino.Session;
 import io.trino.client.Column;
 import io.trino.spi.Page;
+import io.trino.spi.block.Block;
 import io.trino.spi.type.Type;
 import jakarta.annotation.Nullable;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalLong;
 
 import static com.google.common.base.MoreObjects.toStringHelper;
 import static com.google.common.base.Preconditions.checkArgument;
@@ -90,23 +92,24 @@ public class QueryResultRows
         return totalRows;
     }
 
-    public Optional<Long> getUpdateCount()
+    public OptionalLong getUpdateCount()
     {
         // We should have exactly single bigint value as an update count.
         if (totalRows != 1 || columns.isEmpty()) {
-            return Optional.empty();
+            return OptionalLong.empty();
         }
 
         List<OutputColumn> singleColumn = columns.get();
-
         if (singleColumn.size() != 1 || !singleColumn.getFirst().type().equals(BIGINT)) {
-            return Optional.empty();
+            return OptionalLong.empty();
         }
 
         checkState(!pages.isEmpty(), "no data pages available");
-        Number value = (Number) singleColumn.getFirst().type().getObjectValue(session.toConnectorSession(), pages.getFirst().getBlock(0), 0);
-
-        return Optional.ofNullable(value).map(Number::longValue);
+        Block block = pages.getFirst().getBlock(0);
+        if (block.isNull(0)) {
+            return OptionalLong.empty();
+        }
+        return OptionalLong.of(BIGINT.getLong(block, 0));
     }
 
     private static long countRows(List<Page> pages)
