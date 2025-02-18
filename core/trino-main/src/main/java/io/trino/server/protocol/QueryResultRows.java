@@ -97,14 +97,14 @@ public class QueryResultRows
             return Optional.empty();
         }
 
-        List<OutputColumn> columns = this.columns.get();
+        List<OutputColumn> singleColumn = columns.get();
 
-        if (columns.size() != 1 || !columns.getFirst().type().equals(BIGINT)) {
+        if (singleColumn.size() != 1 || !singleColumn.getFirst().type().equals(BIGINT)) {
             return Optional.empty();
         }
 
         checkState(!pages.isEmpty(), "no data pages available");
-        Number value = (Number) columns.getFirst().type().getObjectValue(session.toConnectorSession(), pages.getFirst().getBlock(0), 0);
+        Number value = (Number) singleColumn.getFirst().type().getObjectValue(session.toConnectorSession(), pages.getFirst().getBlock(0), 0);
 
         return Optional.ofNullable(value).map(Number::longValue);
     }
