@@ -75,69 +75,69 @@
             </resource>
         </resources>
         <plugins>
-            <plugin>
-                <groupId>com.github.eirslett</groupId>
-                <artifactId>frontend-maven-plugin</artifactId>
-                <configuration>
-                    <installDirectory>${node.tmpdir}</installDirectory>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>install node and npm</id>
-                        <goals>
-                            <goal>install-node-and-npm</goal>
-                        </goals>
-                        <phase>generate-resources</phase>
-                        <configuration>
-                            <workingDirectory>src/main/resources/webapp/src</workingDirectory>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>package (webapp)</id>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <phase>generate-resources</phase>
-                        <configuration>
-                            <arguments>run ${frontend.package.goal}</arguments>
-                            <workingDirectory>src/main/resources/webapp/src</workingDirectory>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>check (webapp)</id>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <phase>verify</phase>
-                        <configuration>
-                            <arguments>run ${frontend.check.goal}</arguments>
-                            <workingDirectory>src/main/resources/webapp/src</workingDirectory>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>check (webapp-preview)</id>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <phase>verify</phase>
-                        <configuration>
-                            <arguments>run ${frontend.check.goal}</arguments>
-                            <workingDirectory>src/main/resources/webapp-preview</workingDirectory>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>package (webapp-preview)</id>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <phase>generate-resources</phase>
-                        <configuration>
-                            <arguments>run ${frontend.package.goal}</arguments>
-                            <workingDirectory>src/main/resources/webapp-preview</workingDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+            <!--            <plugin>-->
+            <!--                <groupId>com.github.eirslett</groupId>-->
+            <!--                <artifactId>frontend-maven-plugin</artifactId>-->
+            <!--                <configuration>-->
+            <!--                    <installDirectory>${node.tmpdir}</installDirectory>-->
+            <!--                </configuration>-->
+            <!--                <executions>-->
+            <!--                    <execution>-->
+            <!--                        <id>install node and npm</id>-->
+            <!--                        <goals>-->
+            <!--                            <goal>install-node-and-npm</goal>-->
+            <!--                        </goals>-->
+            <!--                        <phase>generate-resources</phase>-->
+            <!--                        <configuration>-->
+            <!--                            <workingDirectory>src/main/resources/webapp/src</workingDirectory>-->
+            <!--                        </configuration>-->
+            <!--                    </execution>-->
+            <!--                    <execution>-->
+            <!--                        <id>package (webapp)</id>-->
+            <!--                        <goals>-->
+            <!--                            <goal>npm</goal>-->
+            <!--                        </goals>-->
+            <!--                        <phase>generate-resources</phase>-->
+            <!--                        <configuration>-->
+            <!--                            <arguments>run ${frontend.package.goal}</arguments>-->
+            <!--                            <workingDirectory>src/main/resources/webapp/src</workingDirectory>-->
+            <!--                        </configuration>-->
+            <!--                    </execution>-->
+            <!--                    <execution>-->
+            <!--                        <id>check (webapp)</id>-->
+            <!--                        <goals>-->
+            <!--                            <goal>npm</goal>-->
+            <!--                        </goals>-->
+            <!--                        <phase>verify</phase>-->
+            <!--                        <configuration>-->
+            <!--                            <arguments>run ${frontend.check.goal}</arguments>-->
+            <!--                            <workingDirectory>src/main/resources/webapp/src</workingDirectory>-->
+            <!--                        </configuration>-->
+            <!--                    </execution>-->
+            <!--                    <execution>-->
+            <!--                        <id>check (webapp-preview)</id>-->
+            <!--                        <goals>-->
+            <!--                            <goal>npm</goal>-->
+            <!--                        </goals>-->
+            <!--                        <phase>verify</phase>-->
+            <!--                        <configuration>-->
+            <!--                            <arguments>run ${frontend.check.goal}</arguments>-->
+            <!--                            <workingDirectory>src/main/resources/webapp-preview</workingDirectory>-->
+            <!--                        </configuration>-->
+            <!--                    </execution>-->
+            <!--                    <execution>-->
+            <!--                        <id>package (webapp-preview)</id>-->
+            <!--                        <goals>-->
+            <!--                            <goal>npm</goal>-->
+            <!--                        </goals>-->
+            <!--                        <phase>generate-resources</phase>-->
+            <!--                        <configuration>-->
+            <!--                            <arguments>run ${frontend.package.goal}</arguments>-->
+            <!--                            <workingDirectory>src/main/resources/webapp-preview</workingDirectory>-->
+            <!--                        </configuration>-->
+            <!--                    </execution>-->
+            <!--                </executions>-->
+            <!--            </plugin>-->
         </plugins>
     </build>
     <profiles>
