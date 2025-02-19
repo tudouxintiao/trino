@@ -33,6 +33,7 @@ public final class DevelopmentServer
             newOptionalBinder(binder, PluginsProvider.class).setBinding()
                     .to(DevelopmentPluginsProvider.class).in(Scopes.SINGLETON);
             configBinder(binder).bindConfig(DevelopmentLoaderConfig.class);
+            configBinder(binder).bindConfig(ServerPluginsProviderConfig.class);
         });
     }
 
