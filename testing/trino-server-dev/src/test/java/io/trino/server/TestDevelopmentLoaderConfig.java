@@ -24,11 +24,9 @@ import static io.airlift.configuration.testing.ConfigAssertions.assertFullMappin
 import static io.airlift.configuration.testing.ConfigAssertions.assertRecordedDefaults;
 import static io.airlift.configuration.testing.ConfigAssertions.recordDefaults;
 
-public class TestDevelopmentLoaderConfig
-{
+public class TestDevelopmentLoaderConfig {
     @Test
-    public void testDefaults()
-    {
+    public void testDefaults() {
         assertRecordedDefaults(recordDefaults(DevelopmentLoaderConfig.class)
                 .setPlugins(ImmutableList.of())
                 .setMavenLocalRepository(ArtifactResolver.USER_LOCAL_REPO)
@@ -36,8 +34,7 @@ public class TestDevelopmentLoaderConfig
     }
 
     @Test
-    public void testExplicitPropertyMappings()
-    {
+    public void testExplicitPropertyMappings() {
         Map<String, String> properties = ImmutableMap.<String, String>builder()
                 .put("plugin.bundles", "a,b,c")
                 .put("maven.repo.local", "local-repo")
