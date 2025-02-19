@@ -1,0 +1,24 @@
+{
+  "catalogs": [
+    {
+      "user": "admin",
+      "allow": "owner"
+    },
+    {
+      "user": "ob|op",
+      "catalog": "system",
+      "allow": "none"
+    },
+    {
+      "user": "ob",
+      "allow": "read-only"
+    },
+    {
+      "user": "op",
+      "allow": "all"
+    },
+    {
+      "allow": "none"
+    }
+  ]
+}
