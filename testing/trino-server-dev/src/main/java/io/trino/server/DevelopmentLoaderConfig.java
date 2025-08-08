@@ -28,6 +28,10 @@ public class DevelopmentLoaderConfig
     private String mavenLocalRepository = HttpsArtifactResolver.USER_LOCAL_REPO;
     private List<String> mavenRemoteRepository = ImmutableList.of(HttpsArtifactResolver.MAVEN_CENTRAL_URI);
 
+    public DevelopmentLoaderConfig() {
+        System.out.println("DevelopmentLoaderConfig");
+    }
+
     public List<String> getPlugins()
     {
         return plugins;

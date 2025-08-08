@@ -1297,4 +1297,29 @@ public class TestTrinoDriver
             throw new UnknownHostException("Cannot resolve host: " + hostname);
         }
     }
+
+    public static void main(String[] args) {
+        String url = "jdbc:trino://8.134.89.163:8990?user=admin";
+        // 示例：若MySQL的schema为 "sales_db"，则URL为 jdbc:trino://localhost:8080/mysql/sales_db?user=admin
+
+        try (Connection connection = DriverManager.getConnection(url)) {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(
+                    "SELECT * FROM mysql.gantec.ces_table LIMIT 1"  // 直接查询MySQL表
+                    // 示例：SELECT * FROM mysql.sales_db.orders LIMIT 10
+            );
+            // 遍历结果
+            TrinoResultSetMetaData rsd = (TrinoResultSetMetaData) resultSet.getMetaData();
+            String tableName = rsd.getTableName(1);
+            System.out.printf("tableName = %s%n", tableName);
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String name = resultSet.getString("name");
+                System.out.println("ID: " + id + ", Name: " + name);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

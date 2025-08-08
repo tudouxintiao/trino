@@ -19,6 +19,11 @@ import java.io.File;
 
 public class ServerPluginsProviderConfig
 {
+
+    public ServerPluginsProviderConfig() {
+        System.out.println("ServerPluginsProviderConfig");
+    }
+
     private File installedPluginsDir = new File("plugin");
 
     public File getInstalledPluginsDir()

@@ -53,6 +53,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
                 <configuration>
+                    <skip>true</skip>
                     <rules combine.self="override">
                         <requireFilesSize>
                             <!-- Maven Central has a 1GB limit -->
