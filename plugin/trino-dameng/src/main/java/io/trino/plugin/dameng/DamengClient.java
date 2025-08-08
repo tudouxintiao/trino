@@ -367,7 +367,7 @@ public class DamengClient extends BaseJdbcClient {
             return WriteMapping.sliceMapping("blob", varbinaryWriteFunction());
         }
 
-        if (type instanceof TimestampWithTimeZoneType withTimeZoneType) {
+        if (type instanceof TimestampWithTimeZoneType) {
             String dataType;
             if (type == TIMESTAMP_TZ_SECONDS) {
                 dataType = "timestamp(0) with time zone";
@@ -435,8 +435,8 @@ public class DamengClient extends BaseJdbcClient {
         if (timestampColumnSize == ZERO_PRECISION_TIMESTAMP_COLUMN_SIZE) {
             return 0;
         }
-        int timestampPrecision = timestampColumnSize - ZERO_PRECISION_TIMESTAMP_COLUMN_SIZE - 1;
-        verify(1 <= timestampPrecision && timestampPrecision <= TimestampType.MAX_SHORT_PRECISION, "Unexpected timestamp precision %s calculated from timestamp column size %s", timestampPrecision, timestampColumnSize);
+        int timestampPrecision = timestampColumnSize - ZERO_PRECISION_TIMESTAMP_COLUMN_SIZE;
+        verify(timestampPrecision >= 0 && timestampPrecision <= TimestampType.MAX_SHORT_PRECISION, "Unexpected timestamp precision %s calculated from timestamp column size %s", timestampPrecision, timestampColumnSize);
         return timestampPrecision;
     }
 
@@ -445,8 +445,8 @@ public class DamengClient extends BaseJdbcClient {
         if (timeColumnSize == ZERO_PRECISION_TIME_COLUMN_SIZE) {
             return 0;
         }
-        int timePrecision = timeColumnSize - ZERO_PRECISION_TIME_COLUMN_SIZE - 1;
-        verify(1 <= timePrecision && timePrecision <= TimestampType.MAX_SHORT_PRECISION, "Unexpected time precision %s calculated from time column size %s", timePrecision, timeColumnSize);
+        int timePrecision = timeColumnSize - ZERO_PRECISION_TIME_COLUMN_SIZE;
+        verify(timePrecision>= 0 && timePrecision <= TimestampType.MAX_SHORT_PRECISION, "Unexpected time precision %s calculated from time column size %s", timePrecision, timeColumnSize);
         return timePrecision;
     }
 }
