@@ -42,7 +42,8 @@ import static java.util.stream.Collectors.toMap;
 
 public class HttpsArtifactResolver {
     //TODO windows系统  需手动设置maven仓库地址  USER_LOCAL_REPO =${本地setting文件中maven仓库地址}
-    public static final String USER_LOCAL_REPO = "E:\\my_maven_local_repository";
+//    public static final String USER_LOCAL_REPO = "E:\\my_maven_local_repository";
+    public static final String USER_LOCAL_REPO = "/Users/wjs/.m2/repository";
     public static final String MAVEN_CENTRAL_URI = "https://repo1.maven.org/maven2/";
     public static final String ALIYUN_MAVEN_CENTRAL_URI = "https://maven.aliyun.com/repository/public";
     public static final Set<String> DEPRECATED_MAVEN_CENTRAL_URIS = ImmutableSet.<String>builder()

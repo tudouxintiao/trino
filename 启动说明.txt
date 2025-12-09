@@ -195,4 +195,6 @@ return javaName.replace('.','/');
         throw new UncheckedIOException(e);
         }
         }
-至此,整个 mysql 插件就加载完成，项目也就启动成功了.
+
+执行 mvn clean install -DskipTests -Dsort.skip=true 安装插件等，否则启动不了
+启动 io.trino.server.DevelopmentServer的main
