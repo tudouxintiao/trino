@@ -22,39 +22,22 @@ import static com.google.inject.multibindings.OptionalBinder.newOptionalBinder;
 import static io.airlift.configuration.ConfigBinder.configBinder;
 
 public final class DevelopmentServer
-        extends Server {
-    private DevelopmentServer() {
-    }
-
-    public static boolean isWindows() {
-        String os = System.getProperty("os.name").toLowerCase();
-        return os.contains("win");
-    }
+        extends Server
+{
+    private DevelopmentServer() {}
 
     @Override
-    protected Iterable<? extends Module> getAdditionalModules() {
-        if (isWindows()) {
-            return ImmutableList.of(binder -> {
-                newOptionalBinder(binder, PluginsProvider.class).setBinding()
-                        .to(WindowsDevelopmentPluginsProvider.class)
-                        .in(Scopes.SINGLETON);
-                configBinder(binder).bindConfig(WindowsDevelopmentLoaderConfig.class);
-                configBinder(binder).bindConfig(ServerPluginsProviderConfig.class);
-            });
-        }
+    protected Iterable<? extends Module> getAdditionalModules()
+    {
         return ImmutableList.of(binder -> {
             newOptionalBinder(binder, PluginsProvider.class).setBinding()
-                    .to(DevelopmentPluginsProvider.class)
-                    .in(Scopes.SINGLETON);
+                    .to(DevelopmentPluginsProvider.class).in(Scopes.SINGLETON);
             configBinder(binder).bindConfig(DevelopmentLoaderConfig.class);
-            configBinder(binder).bindConfig(ServerPluginsProviderConfig.class);
         });
     }
 
-    public static void main(String[] args) {
-//        String os = System.getProperty("os.name").toLowerCase();
-//        System.out.println("OS: " + os);
+    public static void main(String[] args)
+    {
         new DevelopmentServer().start("dev");
     }
-
 }

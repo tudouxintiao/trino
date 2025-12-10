@@ -16,19 +16,25 @@ package io.trino.server;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Ordering;
 import com.google.inject.Inject;
+import io.airlift.resolver.ArtifactResolver;
 import io.airlift.resolver.DefaultArtifact;
+import io.trino.server.PluginManager.PluginsProvider;
 import org.sonatype.aether.artifact.Artifact;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static io.trino.server.PluginDiscovery.discoverPlugins;
@@ -36,58 +42,62 @@ import static io.trino.server.PluginDiscovery.writePluginServices;
 import static io.trino.util.Executors.executeUntilFailure;
 import static java.util.Objects.requireNonNull;
 
-public class WindowsDevelopmentPluginsProvider
-        extends ServerPluginsProvider {
-    private final WindowsArtifactResolver resolver;
+public class DevelopmentPluginsProvider
+        implements PluginsProvider
+{
+    private final ArtifactResolver resolver;
     private final List<String> plugins;
     private final Executor executor;
 
-
     @Inject
-    public WindowsDevelopmentPluginsProvider(WindowsDevelopmentLoaderConfig config, ServerPluginsProviderConfig config2, @ForStartup Executor executor) {
-        super(config2, executor);
-        this.resolver = new WindowsArtifactResolver(config.getMavenLocalRepository());
+    public DevelopmentPluginsProvider(DevelopmentLoaderConfig config, @ForStartup Executor executor)
+    {
+        this.resolver = new ArtifactResolver(config.getMavenLocalRepository(), config.getMavenRemoteRepository());
         this.plugins = ImmutableList.copyOf(config.getPlugins());
         this.executor = requireNonNull(executor, "executor is null");
-
-
     }
 
     @Override
-    public void loadPlugins(Loader loader, ClassLoaderFactory createClassLoader) {
-        if (!this.plugins.isEmpty()) {
-            executeUntilFailure(
-                    executor,
-                    plugins.stream()
-                            .map(plugin -> (Callable<?>) () -> {
-                                loader.load(plugin, () -> buildClassLoader(plugin, createClassLoader));
-                                return null;
-                            })
-                            .collect(toImmutableList()));
-        }
-        super.loadPlugins(loader, createClassLoader);
+    public void loadPlugins(Loader loader, ClassLoaderFactory createClassLoader)
+    {
+        executeUntilFailure(
+                executor,
+                plugins.stream()
+                        .map(plugin -> (Callable<?>) () -> {
+                            loader.load(plugin, () -> buildClassLoader(plugin, createClassLoader));
+                            return null;
+                        })
+                        .collect(toImmutableList()));
     }
 
-
-    private PluginClassLoader buildClassLoader(String plugin, ClassLoaderFactory classLoaderFactory) {
+    private PluginClassLoader buildClassLoader(String plugin, ClassLoaderFactory classLoaderFactory)
+    {
         try {
             return doBuildClassLoader(plugin, urls -> classLoaderFactory.create(plugin, urls));
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new UncheckedIOException(e);
         }
     }
 
     private PluginClassLoader doBuildClassLoader(String plugin, Function<List<URL>, PluginClassLoader> classLoaderFactory)
-            throws IOException {
+            throws IOException
+    {
         File file = new File(plugin);
         if (file.isFile() && (file.getName().equals("pom.xml") || file.getName().endsWith(".pom"))) {
             return buildClassLoaderFromPom(file, classLoaderFactory);
         }
-        return buildClassLoaderFromCoordinates(plugin, classLoaderFactory);
+        else if (file.isDirectory()) {
+            return buildClassLoaderFromDirectory(file, classLoaderFactory);
+        }
+        else {
+            return buildClassLoaderFromCoordinates(plugin, classLoaderFactory);
+        }
     }
 
     private PluginClassLoader buildClassLoaderFromPom(File pomFile, Function<List<URL>, PluginClassLoader> classLoaderFactory)
-            throws IOException {
+            throws IOException
+    {
         List<Artifact> artifacts = resolver.resolvePom(pomFile);
         PluginClassLoader classLoader = createClassLoader(artifacts, classLoaderFactory);
 
@@ -102,15 +112,35 @@ public class WindowsDevelopmentPluginsProvider
         return classLoader;
     }
 
+    private static PluginClassLoader buildClassLoaderFromDirectory(File pluginDirectory, Function<List<URL>, PluginClassLoader> classLoaderFactory)
+            throws IOException
+    {
+        Function<Path, URL> pathToUrl = path -> {
+            try {
+                return path.toUri().toURL();
+            }
+            catch (MalformedURLException e) {
+                throw new UncheckedIOException(e);
+            }
+        };
+        List<URL> jars;
+        try (Stream<Path> paths = Files.list(pluginDirectory.toPath())) {
+            jars = paths.map(pathToUrl).collect(toImmutableList());
+        }
+        return classLoaderFactory.apply(jars);
+    }
+
     private PluginClassLoader buildClassLoaderFromCoordinates(String coordinates, Function<List<URL>, PluginClassLoader> classLoaderFactory)
-            throws IOException {
+            throws IOException
+    {
         Artifact rootArtifact = new DefaultArtifact(coordinates);
         List<Artifact> artifacts = resolver.resolveArtifacts(rootArtifact);
         return createClassLoader(artifacts, classLoaderFactory);
     }
 
     private static PluginClassLoader createClassLoader(List<Artifact> artifacts, Function<List<URL>, PluginClassLoader> classLoaderFactory)
-            throws IOException {
+            throws IOException
+    {
         List<URL> urls = new ArrayList<>();
         for (Artifact artifact : sortedArtifacts(artifacts)) {
             if (artifact.getFile() == null) {
@@ -122,7 +152,8 @@ public class WindowsDevelopmentPluginsProvider
         return classLoaderFactory.apply(urls);
     }
 
-    private static List<Artifact> sortedArtifacts(List<Artifact> artifacts) {
+    private static List<Artifact> sortedArtifacts(List<Artifact> artifacts)
+    {
         List<Artifact> list = new ArrayList<>(artifacts);
         list.sort(Ordering.natural().nullsLast().onResultOf(Artifact::getFile));
         return list;

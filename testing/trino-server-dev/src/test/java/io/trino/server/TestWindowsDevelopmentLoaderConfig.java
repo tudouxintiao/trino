@@ -24,10 +24,10 @@ import static io.airlift.configuration.testing.ConfigAssertions.assertFullMappin
 import static io.airlift.configuration.testing.ConfigAssertions.assertRecordedDefaults;
 import static io.airlift.configuration.testing.ConfigAssertions.recordDefaults;
 
-public class TestDevelopmentLoaderConfig {
+public class TestWindowsDevelopmentLoaderConfig {
     @Test
     public void testDefaults() {
-        assertRecordedDefaults(recordDefaults(DevelopmentLoaderConfig.class)
+        assertRecordedDefaults(recordDefaults(WindowsDevelopmentLoaderConfig.class)
                 .setPlugins(ImmutableList.of())
                 .setMavenLocalRepository(ArtifactResolver.USER_LOCAL_REPO)
                 .setMavenRemoteRepository(ImmutableList.of(ArtifactResolver.MAVEN_CENTRAL_URI)));
@@ -41,7 +41,7 @@ public class TestDevelopmentLoaderConfig {
                 .put("maven.repo.remote", "remote-a,remote-b")
                 .buildOrThrow();
 
-        DevelopmentLoaderConfig expected = new DevelopmentLoaderConfig()
+        WindowsDevelopmentLoaderConfig expected = new WindowsDevelopmentLoaderConfig()
                 .setPlugins(ImmutableList.of("a", "b", "c"))
                 .setMavenLocalRepository("local-repo")
                 .setMavenRemoteRepository(ImmutableList.of("remote-a", "remote-b"));

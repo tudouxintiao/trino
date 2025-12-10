@@ -145,16 +145,16 @@ image
 
         return classLoader;
         }
-诚如上面的注释所说，我们只需要 复制 一个jar包中的resolver ，然后重写需要的方法，我们就能把 http 改成 https,代码参考 io.trino.server.HttpsArtifactResolver 这个类即可
+诚如上面的注释所说，我们只需要 复制 一个jar包中的resolver ，然后重写需要的方法，我们就能把 http 改成 https,代码参考 io.trino.server.WindowsArtifactResolver 这个类即可
 
-注意：io.trino.server.HttpsArtifactResolver 的本地仓库固定写了，结合自己的环境修改，这个很重要 ，不然后面通过 ClassReader 获取类会找不到(ClassNotFound)
+注意：io.trino.server.WindowsArtifactResolver 的本地仓库固定写了，结合自己的环境修改，这个很重要 ，不然后面通过 ClassReader 获取类会找不到(ClassNotFound)
 
 //TODO windows系统  需手动设置maven仓库地址  USER_LOCAL_REPO =${本地setting文件中maven仓库地址}
 public static final String USER_LOCAL_REPO = "D:\\openSources\\apache-maven-repository";
 然后将下面两个类的相应resolver变更即可
 
 io.trino.server.WindowsDevelopmentPluginsProvider
-io.trino.server.DevelopmentLoaderConfig
+io.trino.server.WindowsDevelopmentLoaderConfig
 重新启动，我们将 http 改成了 https,而且使用的是 阿里云 仓库地址，取代了 源码中 的 中央仓库地址，发现刚才的错误消失了，但是新的错误产生了
 
 image

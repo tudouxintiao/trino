@@ -40,7 +40,7 @@ import static java.lang.String.format;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 
-public class HttpsArtifactResolver {
+public class WindowsArtifactResolver {
     //TODO windows系统  需手动设置maven仓库地址  USER_LOCAL_REPO =${本地setting文件中maven仓库地址}
     public static final String USER_LOCAL_REPO = "E:\\my_maven_local_repository";
     public static final String MAVEN_CENTRAL_URI = "https://repo1.maven.org/maven2/";
@@ -55,11 +55,11 @@ public class HttpsArtifactResolver {
     private final MavenRepositorySystemSession repositorySystemSession;
     private final List<RemoteRepository> repositories;
 
-    public HttpsArtifactResolver(String localRepositoryDir, String... remoteRepositoryUris) {
+    public WindowsArtifactResolver(String localRepositoryDir, String... remoteRepositoryUris) {
         this(localRepositoryDir, Arrays.asList(remoteRepositoryUris));
     }
 
-    public HttpsArtifactResolver(String localRepositoryDir, List<String> remoteRepositoryUris) {
+    public WindowsArtifactResolver(String localRepositoryDir, List<String> remoteRepositoryUris) {
         MavenServiceLocator locator = new MavenServiceLocator();
         locator.addService(RepositoryConnectorFactory.class, FileRepositoryConnectorFactory.class);
         locator.addService(RepositoryConnectorFactory.class, AsyncRepositoryConnectorFactory.class);
@@ -143,7 +143,7 @@ public class HttpsArtifactResolver {
         DependencyRequest dependencyRequest = new DependencyRequest(collectRequest, DependencyFilterUtils.classpathFilter(JavaScopes.RUNTIME));
         List<Artifact> artifacts = resolveArtifacts(dependencyRequest);
 
-        Map<String, Artifact> modules = getSiblingModules(pom).stream().collect(toMap(HttpsArtifactResolver::getArtifactKey, identity()));
+        Map<String, Artifact> modules = getSiblingModules(pom).stream().collect(toMap(WindowsArtifactResolver::getArtifactKey, identity()));
 
         return Stream.concat(Stream.of(rootArtifact), artifacts.stream().map(artifact -> modules.getOrDefault(getArtifactKey(artifact), artifact))).collect(toImmutableList());
     }

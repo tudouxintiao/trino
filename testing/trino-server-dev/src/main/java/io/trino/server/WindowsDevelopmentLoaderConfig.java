@@ -13,28 +13,40 @@
  */
 package io.trino.server;
 
+import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import io.airlift.configuration.Config;
-import io.airlift.resolver.ArtifactResolver;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 
-public class DevelopmentLoaderConfig
+public class WindowsDevelopmentLoaderConfig
 {
+    private static final Splitter SPLITTER = Splitter.on(',').omitEmptyStrings().trimResults();
+
     private List<String> plugins = ImmutableList.of();
-    private String mavenLocalRepository = ArtifactResolver.USER_LOCAL_REPO;
-    private List<String> mavenRemoteRepository = ImmutableList.of(ArtifactResolver.MAVEN_CENTRAL_URI);
+    private String mavenLocalRepository = WindowsArtifactResolver.USER_LOCAL_REPO;
+    private List<String> mavenRemoteRepository = ImmutableList.of(WindowsArtifactResolver.MAVEN_CENTRAL_URI);
+
+    public WindowsDevelopmentLoaderConfig() {
+        System.out.println("DevelopmentLoaderConfig");
+    }
 
     public List<String> getPlugins()
     {
         return plugins;
     }
 
-    @Config("plugin.bundles")
-    public DevelopmentLoaderConfig setPlugins(List<String> plugins)
+    public WindowsDevelopmentLoaderConfig setPlugins(List<String> plugins)
     {
         this.plugins = ImmutableList.copyOf(plugins);
+        return this;
+    }
+
+    @Config("plugin.bundles")
+    public WindowsDevelopmentLoaderConfig setPlugins(String plugins)
+    {
+        this.plugins = SPLITTER.splitToList(plugins);
         return this;
     }
 
@@ -45,7 +57,7 @@ public class DevelopmentLoaderConfig
     }
 
     @Config("maven.repo.local")
-    public DevelopmentLoaderConfig setMavenLocalRepository(String mavenLocalRepository)
+    public WindowsDevelopmentLoaderConfig setMavenLocalRepository(String mavenLocalRepository)
     {
         this.mavenLocalRepository = mavenLocalRepository;
         return this;
@@ -57,10 +69,16 @@ public class DevelopmentLoaderConfig
         return mavenRemoteRepository;
     }
 
-    @Config("maven.repo.remote")
-    public DevelopmentLoaderConfig setMavenRemoteRepository(List<String> mavenRemoteRepository)
+    public WindowsDevelopmentLoaderConfig setMavenRemoteRepository(List<String> mavenRemoteRepository)
     {
-        this.mavenRemoteRepository = ImmutableList.copyOf(mavenRemoteRepository);
+        this.mavenRemoteRepository = mavenRemoteRepository;
+        return this;
+    }
+
+    @Config("maven.repo.remote")
+    public WindowsDevelopmentLoaderConfig setMavenRemoteRepository(String mavenRemoteRepository)
+    {
+        this.mavenRemoteRepository = ImmutableList.copyOf(Splitter.on(',').omitEmptyStrings().trimResults().split(mavenRemoteRepository));
         return this;
     }
 }
