@@ -126,7 +126,7 @@ for project io.trino:trino-mysql:410 at E:\jetbrains\idea\workspace\trino-410\te
 
 image
 
-点击报错的地方，可以看到这么一段源代码: io.trino.server.DevelopmentPluginsProvider.buildClassLoaderFromPom
+点击报错的地方，可以看到这么一段源代码: io.trino.server.WindowsDevelopmentPluginsProvider.buildClassLoaderFromPom
 
     private PluginClassLoader buildClassLoaderFromPom(File pomFile,Function<List<URL>,PluginClassLoader>classLoaderFactory)
         throws IOException{
@@ -153,7 +153,7 @@ image
 public static final String USER_LOCAL_REPO = "D:\\openSources\\apache-maven-repository";
 然后将下面两个类的相应resolver变更即可
 
-io.trino.server.DevelopmentPluginsProvider
+io.trino.server.WindowsDevelopmentPluginsProvider
 io.trino.server.DevelopmentLoaderConfig
 重新启动，我们将 http 改成了 https,而且使用的是 阿里云 仓库地址，取代了 源码中 的 中央仓库地址，发现刚才的错误消失了，但是新的错误产生了
 

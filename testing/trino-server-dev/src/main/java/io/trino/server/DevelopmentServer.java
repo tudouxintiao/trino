@@ -26,12 +26,18 @@ public final class DevelopmentServer
 {
     private DevelopmentServer() {}
 
+    public static boolean isWindows() {
+        String os = System.getProperty("os.name").toLowerCase();
+        return os.contains("win");
+    }
+
     @Override
     protected Iterable<? extends Module> getAdditionalModules()
     {
         return ImmutableList.of(binder -> {
             newOptionalBinder(binder, PluginsProvider.class).setBinding()
-                    .to(DevelopmentPluginsProvider.class).in(Scopes.SINGLETON);
+                    .to(isWindows() ? WindowsDevelopmentPluginsProvider.class: null)
+                    .in(Scopes.SINGLETON);
             configBinder(binder).bindConfig(DevelopmentLoaderConfig.class);
             configBinder(binder).bindConfig(ServerPluginsProviderConfig.class);
         });
@@ -39,6 +45,9 @@ public final class DevelopmentServer
 
     public static void main(String[] args)
     {
-        new DevelopmentServer().start("dev");
+        String os = System.getProperty("os.name").toLowerCase();
+        System.out.println("OS: " + os);
+//        new DevelopmentServer().start("dev");
     }
+
 }

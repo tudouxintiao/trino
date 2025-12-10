@@ -36,7 +36,7 @@ import static io.trino.server.PluginDiscovery.writePluginServices;
 import static io.trino.util.Executors.executeUntilFailure;
 import static java.util.Objects.requireNonNull;
 
-public class DevelopmentPluginsProvider
+public class WindowsDevelopmentPluginsProvider
         extends ServerPluginsProvider {
     private final HttpsArtifactResolver resolver;
     private final List<String> plugins;
@@ -44,7 +44,7 @@ public class DevelopmentPluginsProvider
 
 
     @Inject
-    public DevelopmentPluginsProvider(DevelopmentLoaderConfig config, ServerPluginsProviderConfig config2, @ForStartup Executor executor) {
+    public WindowsDevelopmentPluginsProvider(DevelopmentLoaderConfig config, ServerPluginsProviderConfig config2, @ForStartup Executor executor) {
         super(config2, executor);
         this.resolver = new HttpsArtifactResolver(config.getMavenLocalRepository());
         this.plugins = ImmutableList.copyOf(config.getPlugins());
