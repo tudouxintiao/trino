@@ -41,6 +41,7 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 
 public class HttpsArtifactResolver {
+
     //TODO windows系统  需手动设置maven仓库地址  USER_LOCAL_REPO =${本地setting文件中maven仓库地址}
 //    public static final String USER_LOCAL_REPO = "E:\\my_maven_local_repository";
     public static final String USER_LOCAL_REPO = "/Users/wjs/.m2/repository";
