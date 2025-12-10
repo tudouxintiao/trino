@@ -42,6 +42,7 @@ public class DevelopmentPluginsProvider
     private final List<String> plugins;
     private final Executor executor;
 
+
     @Inject
     public DevelopmentPluginsProvider(DevelopmentLoaderConfig config, ServerPluginsProviderConfig config2, @ForStartup Executor executor) {
         super(config2, executor);
