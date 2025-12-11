@@ -10,7 +10,6 @@ idea添加 VM Options: -ea -Dconfig=etc/config.properties -Dlog.levels-file=etc/
 源码编译
 修改根 pom.xml 的插件： git-commit-id-plugin
 
-
 <plugin>
     <groupId>pl.project13.maven</groupId>
     <artifactId>git-commit-id-plugin</artifactId>
