@@ -15,10 +15,6 @@ package io.trino.plugin.dameng;
 
 import io.airlift.configuration.Config;
 import io.airlift.configuration.ConfigDescription;
-import io.airlift.units.Duration;
-import jakarta.validation.constraints.Min;
-
-import java.util.concurrent.TimeUnit;
 
 public class DamengConfig {
     private int autoReconnect;
