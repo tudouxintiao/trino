@@ -13,17 +13,12 @@
  */
 package io.trino.plugin.dameng;
 
-import com.google.inject.Binder;
+import com.google.inject.*;
 import com.google.inject.Module;
-import com.google.inject.Provides;
-import com.google.inject.Scopes;
-import com.google.inject.Singleton;
 import dm.jdbc.driver.DmDriver;
 import io.opentelemetry.api.OpenTelemetry;
 import io.trino.plugin.jdbc.*;
 import io.trino.plugin.jdbc.credential.CredentialProvider;
-import io.trino.plugin.jdbc.DecimalModule;
-import io.trino.plugin.jdbc.credential.EmptyCredentialProvider;
 
 import java.sql.SQLException;
 import java.util.Properties;
@@ -38,15 +33,28 @@ public class DamengClientModule implements Module {
         configBinder(binder).bindConfig(DamengConfig.class);
     }
 
+//    @Provides
+//    @Singleton
+//    @ForBaseJdbc
+//    public static ConnectionFactory createConnectionFactory(BaseJdbcConfig config, CredentialProvider credentialProvider, DamengConfig damengConfig, OpenTelemetry openTelemetry)
+//            throws SQLException {
+//        return DriverConnectionFactory.builder(new DmDriver(), config.getConnectionUrl(), credentialProvider)
+//                .setConnectionProperties(getConnectionProperties(damengConfig))
+//                .setOpenTelemetry(openTelemetry)
+//                .build();
+//    }
+
     @Provides
     @Singleton
     @ForBaseJdbc
     public static ConnectionFactory createConnectionFactory(BaseJdbcConfig config, CredentialProvider credentialProvider, DamengConfig damengConfig, OpenTelemetry openTelemetry)
             throws SQLException {
-        return DriverConnectionFactory.builder(new DmDriver(), config.getConnectionUrl(), credentialProvider)
-                .setConnectionProperties(getConnectionProperties(damengConfig))
-                .setOpenTelemetry(openTelemetry)
-                .build();
+        return new DriverConnectionFactory(
+                new DmDriver(),
+                config.getConnectionUrl(),
+                getConnectionProperties(damengConfig),
+                credentialProvider,
+                openTelemetry);
     }
 
     public static Properties getConnectionProperties(DamengConfig damengConfig) {

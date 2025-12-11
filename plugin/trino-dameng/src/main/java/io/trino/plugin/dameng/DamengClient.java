@@ -153,7 +153,7 @@ public class DamengClient extends BaseJdbcClient {
     @Override
     protected boolean isSupportedJoinCondition(ConnectorSession session, JdbcJoinCondition joinCondition)
     {
-        return joinCondition.getOperator() != JoinCondition.Operator.IDENTICAL;
+        return joinCondition.getOperator() != JoinCondition.Operator.IS_DISTINCT_FROM;
     }
 
     protected void renameColumn(ConnectorSession session, Connection connection, RemoteTableName remoteTableName, String remoteColumnName, String newRemoteColumnName)
@@ -203,7 +203,7 @@ public class DamengClient extends BaseJdbcClient {
     @Override
     public Optional<ColumnMapping> toColumnMapping(ConnectorSession session, Connection connection, JdbcTypeHandle typeHandle)
     {
-        String jdbcTypeName = typeHandle.jdbcTypeName()
+        String jdbcTypeName = typeHandle.getJdbcTypeName()
                 .orElseThrow(() -> new TrinoException(JDBC_ERROR, "Type name is missing: " + typeHandle));
 
         Optional<ColumnMapping> mapping = getForcedMappingToVarchar(typeHandle);
@@ -223,7 +223,7 @@ public class DamengClient extends BaseJdbcClient {
                 return Optional.of(decimalColumnMapping(createDecimalType(20)));
         }
 
-        switch (typeHandle.jdbcType()) {
+        switch (typeHandle.getJdbcType()) {
             case Types.BIT:
                 return Optional.of(booleanColumnMapping());
 
@@ -253,8 +253,8 @@ public class DamengClient extends BaseJdbcClient {
 
             case Types.NUMERIC:
             case Types.DECIMAL:
-                int decimalDigits = typeHandle.decimalDigits().orElseThrow(() -> new IllegalStateException("decimal digits not present"));
-                int precision = typeHandle.requiredColumnSize();
+                int decimalDigits = typeHandle.getDecimalDigits().orElseThrow(() -> new IllegalStateException("decimal digits not present"));
+                int precision = typeHandle.getRequiredColumnSize();
                 if (getDecimalRounding(session) == ALLOW_OVERFLOW && precision > Decimals.MAX_PRECISION) {
                     int scale = min(decimalDigits, getDecimalDefaultScale(session));
                     return Optional.of(decimalColumnMapping(createDecimalType(Decimals.MAX_PRECISION, scale), getDecimalRoundingMode(session)));
@@ -267,14 +267,14 @@ public class DamengClient extends BaseJdbcClient {
                 return Optional.of(decimalColumnMapping(createDecimalType(precision, max(decimalDigits, 0))));
 
             case Types.CHAR:
-                return Optional.of(defaultCharColumnMapping(typeHandle.requiredColumnSize(), false));
+                return Optional.of(defaultCharColumnMapping(typeHandle.getRequiredColumnSize(), false));
 
             // TODO not all these type constants are necessarily used by the JDBC driver
             case Types.VARCHAR:
             case Types.NVARCHAR:
             case Types.LONGVARCHAR:
             case Types.LONGNVARCHAR:
-                return Optional.of(defaultVarcharColumnMapping(typeHandle.requiredColumnSize(), false));
+                return Optional.of(defaultVarcharColumnMapping(typeHandle.getRequiredColumnSize(), false));
 
             case Types.BINARY:
             case Types.VARBINARY:
@@ -288,7 +288,7 @@ public class DamengClient extends BaseJdbcClient {
                         dateWriteFunctionUsingLocalDate()));
 
             case Types.TIME:
-                TimeType timeType = createTimeType(getTimePrecision(typeHandle.requiredColumnSize()));
+                TimeType timeType = createTimeType(getTimePrecision(typeHandle.getRequiredColumnSize()));
                 requireNonNull(timeType, "timeType is null");
                 checkArgument(timeType.getPrecision() <= 9, "Unsupported type precision: %s", timeType);
                 return Optional.of(ColumnMapping.longMapping(
@@ -297,7 +297,7 @@ public class DamengClient extends BaseJdbcClient {
                         timeWriteFunction(timeType.getPrecision())));
 
             case Types.TIMESTAMP:
-                TimestampType timestampType = createTimestampType(getTimestampPrecision(typeHandle.requiredColumnSize()));
+                TimestampType timestampType = createTimestampType(getTimestampPrecision(typeHandle.getRequiredColumnSize()));
                 checkArgument(timestampType.getPrecision() <= TimestampType.MAX_SHORT_PRECISION, "Precision is out of range: %s", timestampType.getPrecision());
                 return Optional.of(ColumnMapping.longMapping(
                         timestampType,
