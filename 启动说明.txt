@@ -1,6 +1,7 @@
 
+mvn clean install -DskipTests=true
 mvn antlr4:antlr4
-mvn clean install -DskipTests -Dsort.skip=true
+
 启动类 io.trino.server.DevelopmentServer main方法
 idea添加 VM Options: -ea -Dconfig=etc/config.properties -Dlog.levels-file=etc/log.properties -Djdk.attach.allowAttachSelf=true
 如果是macos需要使用绝对路径
